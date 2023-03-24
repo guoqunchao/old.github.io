@@ -3,7 +3,7 @@ layout:     post
 title:      KeepAlived+LVS
 subtitle:   keepalived+lvs+ingress配置详解
 date:       2023-03-24
-author:     SY
+author:     shanyi
 header-img: img/post-bg-coffee.jpeg
 catalog: true
 tags:
@@ -16,7 +16,7 @@ tags:
 
 ## 前言
 
-作为一名iOS开发者，最近面试被问到了`KVO`的问题。其实`KVO`的原理以及`runtiem`的知识，很早之前就有学习和使用了，但是实现的细节都忘记差不多了，故再此重新梳理一下。
+本次通过双vip互为主备搭建keepalived、lvs、ingress高可用架构。
 
 
 
