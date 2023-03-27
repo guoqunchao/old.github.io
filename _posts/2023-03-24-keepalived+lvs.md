@@ -30,5 +30,4 @@ tags:
 #### 2.4 透传CIP 响应报文Ingress直接返回
 
 ## 3.访问流程
-lvs01.jpg   
- 
+https://qunchao.top/img/2023-03-24-keepalived+lvs/lvs01.jpg
