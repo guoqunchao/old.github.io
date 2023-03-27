@@ -10,26 +10,26 @@
   }
 }
 .sidebar-container {
-  color: #bfbfbf;
+  color: #000000;
   font-size: 14px;
 }
 .sidebar-container h5 {
-  color: #808080;
+  color: #000000;
   padding-bottom: 1em;
 }
 .sidebar-container h5 a {
-  color: #808080 !important;
+  color: #000000 !important;
   text-decoration: none;
 }
 .sidebar-container a {
-  color: #bfbfbf !important;
+  color: #000000 !important;
 }
 .sidebar-container a:hover,
 .sidebar-container a:active {
   color: #0085a1 !important;
 }
 .sidebar-container .tags a {
-  border-color: #bfbfbf;
+  border-color: #000000;
 }
 .sidebar-container .tags a:hover,
 .sidebar-container .tags a:active {
