@@ -18,7 +18,7 @@ tags:
 本次通过双vip互为主备搭建keepalived、lvs、ingress高可用架构。
 
 ## 1.资源清单
-| vip|lvs|ingress|
+| vip|lvs|ingress|  
 |---|---|---|  
 | 10.255.23.73 | 10.255.23.42 | 10.255.23.4(预发布) |   
 | 10.255.23.74 | 10.255.23.44 | 10.255.23.9(预发布) | 
@@ -33,8 +33,7 @@ tags:
 
 ## 3.访问流程
 ![](/img/2023-03-24-keepalived+lvs/lvs01.jpg)
-<font size=2>
-1.当客户端用户发送请求http://www.xxx.com/，首先经过DNS解析到IP后经过网络到达keepalived服务器。   
+1.当客户端用户发送请求http://www.xxx.com/，首先经过DNS解析到IP后经过网络到达keepalived服务器。    
 
 2.此时达到 keepalived 网卡的数据包包括：SIP(客户端地址)、DIP(keepalived-vip)、SMAC(cmac/keepalived连接路由的mac)、DMAC(vip对应的mac)。 
 
@@ -49,8 +48,6 @@ tags:
 7.当数据包达到RS内部时，看到是自己的MAC，且自己有VIP，那么开始构建响应报文，将响应报文通过本地配置路由规则（route add -host $VIP dev lo:0）交给lo接口传送给物理网卡向外发出。 
 
 8.此时的源 IP 地址为 VIP，目标 IP 为 CIP，源 MAC 地址为 RS1 的 RMAC，目的 MAC 地址为下一跳路由器的 MAC 地址（CMAC），最终数据包通过 RS 相连的路由器转发给客户端。   
-
-</font>
 
 ## 4.优劣势
 #### 4.1 优势
