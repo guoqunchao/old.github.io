@@ -26,10 +26,10 @@ tags:
 
 ## 2.架构拓扑
 ![](/img/2023-03-24-keepalived+lvs/lvs工作流程图2.jpg)
-#### 2.1 双VIP互为主备
-#### 2.2 KeepAlived Http接口健康探测
-#### 2.3 LVS DR直接路由
-#### 2.4 透传CIP 响应报文Ingress直接返回
+`* 双VIP互为主备`
+`* KeepAlived Http接口健康探测`
+`* LVS DR直接路由`
+`* 透传CIP 响应报文Ingress直接返回`
 
 ## 3.访问流程
 ![](/img/2023-03-24-keepalived+lvs/lvs01.jpg)
