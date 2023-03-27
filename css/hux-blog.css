@@ -10,26 +10,26 @@
   }
 }
 .sidebar-container {
-  color: #000000;
+  color: #9d0091;
   font-size: 14px;
 }
 .sidebar-container h5 {
-  color: #000000;
+  color: #9d0091;
   padding-bottom: 1em;
 }
 .sidebar-container h5 a {
-  color: #000000 !important;
+  color: #9d0091 !important;
   text-decoration: none;
 }
 .sidebar-container a {
-  color: #000000 !important;
+  color: #9d0091 !important;
 }
 .sidebar-container a:hover,
 .sidebar-container a:active {
   color: #0085a1 !important;
 }
 .sidebar-container .tags a {
-  border-color: #000000;
+  border-color: #9d0091;
 }
 .sidebar-container .tags a:hover,
 .sidebar-container .tags a:active {
