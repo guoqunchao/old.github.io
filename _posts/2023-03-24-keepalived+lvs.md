@@ -24,10 +24,10 @@ tags:
 | 10.255.23.74 | 10.255.23.44 | 10.255.23.9(预发布) | 
 
 
-|  |  |  |  |
-| --- | --- | --- | --- |
-|  |  |  |  |
-|  |  |  |  |
+| vip | lvs | ingress |
+| --- | --- | --- | 
+| 10.255.23.73 | 10.255.23.42 | 10.255.23.4(预发布) | 
+| 10.255.23.74 | 10.255.23.44 | 10.255.23.9(预发布) | 
 
 ## 2.架构拓扑
 #### 2.1 双VIP互为主备
@@ -36,6 +36,6 @@ tags:
 #### 2.4 透传CIP 响应报文Ingress直接返回
 
 ## 3.访问流程
-https://qunchao.top/img/2023-03-24-keepalived+lvs/lvs01.jpg
-/img/2023-03-24-keepalived+lvs/lvs01.jpg
+https://qunchao.top/img/2023-03-24-keepalived+lvs/lvs01.jpg  
+/img/2023-03-24-keepalived+lvs/lvs01.jpg   
 
