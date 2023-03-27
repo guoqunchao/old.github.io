@@ -7,9 +7,9 @@ author:     shanyi
 header-img: img/post-bg-swift2.jpg
 catalog: true
 tags:
-    - KeepAlived
-    - LVS
-    - Ingress
+    - keepalived
+    - lvs
+    - ingress
     - ipvs
     - iptables
 ---
