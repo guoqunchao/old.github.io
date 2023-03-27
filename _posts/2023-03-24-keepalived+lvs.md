@@ -33,7 +33,6 @@ tags:
 
 ## 3.访问流程
 ![](/img/2023-03-24-keepalived+lvs/lvs01.jpg)
-```shell
 1.当客户端用户发送请求http://www.xxx.com/，首先经过DNS解析到IP后经过网络到达keepalived服务器。    
 
 2.此时达到 keepalived 网卡的数据包包括：SIP(客户端地址)、DIP(keepalived-vip)、SMAC(cmac/keepalived连接路由的mac)、DMAC(vip对应的mac)。 
@@ -49,7 +48,6 @@ tags:
 7.当数据包达到RS内部时，看到是自己的MAC，且自己有VIP，那么开始构建响应报文，将响应报文通过本地配置路由规则（route add -host $VIP dev lo:0）交给lo接口传送给物理网卡向外发出。 
 
 8.此时的源 IP 地址为 VIP，目标 IP 为 CIP，源 MAC 地址为 RS1 的 RMAC，目的 MAC 地址为下一跳路由器的 MAC 地址（CMAC），最终数据包通过 RS 相连的路由器转发给客户端。   
-```
 ## 4.优劣势
 #### 4.1 优势
 `响应数据不经过lvs，性能高，可透传CIP。`   
