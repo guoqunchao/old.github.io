@@ -35,22 +35,14 @@ tags:
 ## 3.访问流程
 ![](/img/2023-03-24-keepalived+lvs/lvs01.jpg)
 
-<font size=2>1.当客户端用户发送请求http://www.xxx.com/，首先经过DNS解析到IP后经过网络到达keepalived服务器。 </font>
-<p></p>
-<font size=2>2.此时达到 keepalived 网卡的数据包包括：SIP(客户端地址)、DIP(keepalived-vip)、SMAC(cmac/keepalived连接路由的mac)、DMAC(vip对应的mac)。</font>
-<p></p>
-<font size=2>3.数据包达到网卡后，经过链路层到达 PREROUTING 链，进行查找路由，发现 DIP 是lvs的 VIP，这时就会发送至 INPUT 链中并且数据包的IP地址、MAC地址、Port都未经过修改。 </font>
-<p></p>
-<font size=2>4.数据包到到达INPUT链中，LVS会根据目的IP和Port确认是否为LVS定义的服务。（如果不是则直接进入用户空间）。   </font>
-<p></p>
-<font size=2>5.如果是定义过的VIP服务，会根据配置的服务信息及相关算法（默认rr）从 RealServer 中选择一个后端服务，被 ipvs 规则强行扭转到 POSTROUTING 链，此时 SMAC 为VIP所在网卡MAC，目标MAC为RS的MAC地址。   </font>
-<p></p>
-<font size=2>6.由于集群主机间都要接入交换机，而交换机只是识别MAC，所以数据包只在lvs上改了SMAC＋DMAC，其它层次并未改变。   </font>
-<p></p>
-<font size=2>7.当数据包达到RS内部时，看到是自己的MAC，且自己有VIP，那么开始构建响应报文，将响应报文通过本地配置路由规则（route add -host $VIP dev lo:0）交给lo接口传送给物理网卡向外发出。 </font>
-<p></p>
-<font size=2>8.此时的源 IP 地址为 VIP，目标 IP 为 CIP，源 MAC 地址为 RS1 的 RMAC，目的 MAC 地址为下一跳路由器的 MAC 地址（CMAC），最终数据包通过 RS 相连的路由器转发给客户端。   </font>
-
+<font size=2>1.当客户端用户发送请求http://www.xxx.com/，首先经过DNS解析到IP后经过网络到达keepalived服务器。 </font>    
+<font size=2>2.此时达到 keepalived 网卡的数据包包括：SIP(客户端地址)、DIP(keepalived-vip)、SMAC(cmac/keepalived连接路由的mac)、DMAC(vip对应的mac)。</font>  
+<font size=2>3.数据包达到网卡后，经过链路层到达 PREROUTING 链，进行查找路由，发现 DIP 是lvs的 VIP，这时就会发送至 INPUT 链中并且数据包的IP地址、MAC地址、Port都未经过修改。 </font>   
+<font size=2>4.数据包到到达INPUT链中，LVS会根据目的IP和Port确认是否为LVS定义的服务。（如果不是则直接进入用户空间）。   </font>  
+<font size=2>5.如果是定义过的VIP服务，会根据配置的服务信息及相关算法（默认rr）从 RealServer 中选择一个后端服务，被 ipvs 规则强行扭转到 POSTROUTING 链，此时 SMAC 为VIP所在网卡MAC，目标MAC为RS的MAC地址。   </font>  
+<font size=2>6.由于集群主机间都要接入交换机，而交换机只是识别MAC，所以数据包只在lvs上改了SMAC＋DMAC，其它层次并未改变。   </font>  
+<font size=2>7.当数据包达到RS内部时，看到是自己的MAC，且自己有VIP，那么开始构建响应报文，将响应报文通过本地配置路由规则（route add -host $VIP dev lo:0）交给lo接口传送给物理网卡向外发出。 </font>  
+<font size=2>8.此时的源 IP 地址为 VIP，目标 IP 为 CIP，源 MAC 地址为 RS1 的 RMAC，目的 MAC 地址为下一跳路由器的 MAC 地址（CMAC），最终数据包通过 RS 相连的路由器转发给客户端。   </font>   
 
 
 ## 4.优劣势
