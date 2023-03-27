@@ -4,7 +4,7 @@ title:      KeepAlived+LVS
 subtitle:   keepalived+lvs+ingress配置详解
 date:       2023-03-24
 author:     shanyi
-header-img: img/post-bg-coffee.jpeg
+header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
     - KeepAlived
@@ -18,6 +18,10 @@ tags:
 本次通过双vip互为主备搭建keepalived、lvs、ingress高可用架构。
 
 ## 1.资源清单
+|vip|lvs|ingress|
+|---|---|---|
+|10.255.23.73|10.255.23.42|10.255.23.4(预发布)|
+|10.255.23.74|10.255.23.44|10.255.23.9(预发布)|
 
 ## 2.架构拓扑
 #### 2.1 双VIP互为主备
@@ -26,24 +30,4 @@ tags:
 #### 2.4 透传CIP 响应报文Ingress直接返回
 
 ## 3.访问流程
-### 3.访问流程
-#### 3.访问流程
-##### 3.访问流程
-###### 3.访问流程
-```shell
-[root@baoding-lvs-10-255-23-42 ~]# cat /etc/keepalived/keepalived.conf
-vrrp_instance VI_1 {
-    state MASTER
-    interface bond0
-    virtual_router_id 51
-    priority 100
-    advert_int 1
-    authentication {
-        auth_type PASS
-        auth_pass 11112222
-    }
-    virtual_ipaddress {
-        10.255.23.73
-    }
-}
-```
+img/lvs工作流程图.jpg
