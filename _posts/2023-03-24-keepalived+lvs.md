@@ -157,17 +157,17 @@ virtual_server 10.0.0.100 80 {
 #### 5.4 keepalived-http健康探测
 ```shell
 #http健康检查
-virtual_server 10.255.23.73 8765 {
+virtual_server 10.255.23.73 80 {
     delay_loop 10
     lb_algo rr
     lb_kind DR
     persistence_timeout 120
     protocol TCP
-    real_server 10.255.23.4 8765 {
+    real_server 10.255.23.6 80 {
         weight 1
         HTTP_GET {
             url {
-                path /index.html
+                path /healthz
                 status_code 200
             }
             connect_timeout 5
@@ -175,11 +175,11 @@ virtual_server 10.255.23.73 8765 {
             delay_before_retry 3
         }
     }
-    real_server 10.255.23.10 8765 {
+    real_server 10.255.23.7 80 {
         weight 1
         HTTP_GET {
             url {
-                path /index.html
+                path /healthz
                 status_code 200
             }
             connect_timeout 5
@@ -189,17 +189,17 @@ virtual_server 10.255.23.73 8765 {
     }
 }
  
-virtual_server 10.255.23.74 8765 {
+virtual_server 10.255.23.74 80 {
     delay_loop 10
     lb_algo rr
     lb_kind DR
     persistence_timeout 120
     protocol TCP
-    real_server 10.255.23.4 8765 {
+    real_server 10.255.23.6 80 {
         weight 1
         HTTP_GET {
             url {
-                path /index.html
+                path /healthz
                 status_code 200
             }
             connect_timeout 5
@@ -207,74 +207,11 @@ virtual_server 10.255.23.74 8765 {
             delay_before_retry 3
         }
     }
-    real_server 10.255.23.10 8765 {
+    real_server 10.255.23.7 80 {
         weight 1
         HTTP_GET {
             url {
-                path /index.html
-                status_code 200
-            }
-            connect_timeout 5
-            nb_get_retry 3
-            delay_before_retry 3
-        }
-    }
-}
-virtual_server 10.255.23.73 8765 {
-    delay_loop 6
-    lb_algo rr
-    lb_kind DR
-    persistence_timeout 120
-    protocol TCP
-    real_server 10.255.23.4 8765 {
-        weight 1
-        HTTP_GET {
-            url {
-                path /index.html
-                status_code 200
-            }
-            connect_timeout 5
-            nb_get_retry 3
-            delay_before_retry 3
-        }
-    }
-    real_server 10.255.23.10 8765 {
-        weight 1
-        HTTP_GET {
-            url {
-                path /index.html
-                status_code 200
-            }
-            connect_timeout 5
-            nb_get_retry 3
-            delay_before_retry 3
-        }
-    }
-}
- 
-virtual_server 10.255.23.74 8765 {
-    delay_loop 6
-    lb_algo rr
-    lb_kind DR
-    persistence_timeout 120
-    protocol TCP
-    real_server 10.255.23.4 8765 {
-        weight 1
-        HTTP_GET {
-            url {
-                path /index.html
-                status_code 200
-            }
-            connect_timeout 5
-            nb_get_retry 3
-            delay_before_retry 3
-        }
-    }
-    real_server 10.255.23.10 8765 {
-        weight 1
-        HTTP_GET {
-            url {
-                path /index.html
+                path /healthz
                 status_code 200
             }
             connect_timeout 5
@@ -359,15 +296,15 @@ NAME=loopback
     inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
  
-#配置内核参数 arp_ignore(响应arp作用域/级别) arp_announce(发送arp源信息) 
-[root@localhost network-scripts]# cat >> /etc/sysctl.conf << EOF
+#配置内核参数 arp_ignore(响应arp作用域/级别) arp_announce(发送arp源信息)   
+[root@localhost network-scripts]# cat >> /etc/sysctl.conf << EOF  
 net.ipv4.conf.all.arp_ignore = 1
 net.ipv4.conf.default.arp_ignore = 1
 net.ipv4.conf.lo.arp_ignore = 1
 net.ipv4.conf.all.arp_announce = 2
 net.ipv4.conf.default.arp_announce = 2
 net.ipv4.conf.lo.arp_announce = 2
-EOF
+EOF  
 [root@localhost network-scripts]# sysctl -p
 net.ipv4.conf.all.arp_ignore = 1
 net.ipv4.conf.default.arp_ignore = 1
@@ -646,5 +583,4 @@ ipvsadm-restore < ipvs.rule
 
 #通过重定向将当前规则重定向到系统默认的规则存放位置，将规则存放在这个文件里，重启服务会自动恢复里面的规则
 ipvsadm-save > /etc/sysconfig/ipvsadm
-
 ```
