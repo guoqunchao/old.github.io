@@ -615,3 +615,36 @@ TCP  10.255.23.74:8765 rr persistent 120
  
 #访问服务正常
 ```
+
+## 7.ipvsadm命令详解
+#### 7.1 保存及重载
+```shell
+#创建virtual-service
+ipvsadm -A -t 10.255.23.73:80 -s rr
+
+#删除virtual-service
+ipvsadm -D -t 10.255.23.73:80
+
+#创建real-server
+ipvsadm -a -t 10.255.23.73:80 -r 10.255.23.4:80 -g
+
+#删除real-server
+ipvsadm -d -t 10.255.23.73:80 -r 10.255.23.4:80
+
+#保存规则，直接打印屏幕
+ipvsadm-save
+-A -t 10.255.23.73:http -s rr
+
+#将规则文件输出在文件中保存，文件名和后缀都不重要
+ipvsadm-save >ipvs.rule
+
+#重载规则
+ipvsadm-restore < ipvs.rule
+
+#系统默认的规则存放位置
+/etc/sysconfig/ipvsadm
+
+#通过重定向将当前规则重定向到系统默认的规则存放位置，将规则存放在这个文件里，重启服务会自动恢复里面的规则
+ipvsadm-save > /etc/sysconfig/ipvsadm
+
+```
