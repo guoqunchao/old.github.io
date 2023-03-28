@@ -297,14 +297,6 @@ NAME=loopback
        valid_lft forever preferred_lft forever
  
 #配置内核参数 arp_ignore(响应arp作用域/级别) arp_announce(发送arp源信息)   
-[root@localhost network-scripts]# cat >> /etc/sysctl.conf << EOF  
-net.ipv4.conf.all.arp_ignore = 1
-net.ipv4.conf.default.arp_ignore = 1
-net.ipv4.conf.lo.arp_ignore = 1
-net.ipv4.conf.all.arp_announce = 2
-net.ipv4.conf.default.arp_announce = 2
-net.ipv4.conf.lo.arp_announce = 2
-EOF  
 [root@localhost network-scripts]# sysctl -p
 net.ipv4.conf.all.arp_ignore = 1
 net.ipv4.conf.default.arp_ignore = 1
