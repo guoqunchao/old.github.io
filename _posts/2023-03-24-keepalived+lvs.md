@@ -259,7 +259,20 @@ TCP  10.255.23.74:80 rr
 ```shell
 #两台rs均执行
  
-#配置网卡
+#配置网卡 方法1
+ifconfig lo:1 10.255.23.73 netmask 255.255.255.255 broadcast 10.255.23.73 up
+ifconfig lo:2 10.255.23.74 netmask 255.255.255.255 broadcast 10.255.23.74 up
+route add -host 10.255.23.73 dev lo:1
+route add -host 10.255.23.74 dev lo:2
+
+#加入开机加载
+cat /etc/rc.local 
+/usr/sbin/ifconfig lo:1 10.255.23.73 netmask 255.255.255.255 broadcast 10.255.23.73 up
+/usr/sbin/ifconfig lo:2 10.255.23.74 netmask 255.255.255.255 broadcast 10.255.23.74 up
+/usr/sbin/route add -host 10.255.23.73 dev lo:1
+/usr/sbin/route add -host 10.255.23.74 dev lo:2
+
+#配置网卡 方法2
 [root@master3 ~]# cp /etc/sysconfig/network-scripts/ifcfg-lo /etc/sysconfig/network-scripts/ifcfg-lo:1
 [root@master3 ~]# cp /etc/sysconfig/network-scripts/ifcfg-lo /etc/sysconfig/network-scripts/ifcfg-lo:2
 [root@master3 ~]# cat /etc/sysconfig/network-scripts/ifcfg-lo:1
@@ -346,6 +359,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 179.20.8.0      179.20.8.0      255.255.255.0   UG    0      0        0 flannel.1
 179.20.9.0      179.20.9.0      255.255.255.0   UG    0      0        0 flannel.1
 179.20.10.0     179.20.10.0     255.255.255.0   UG    0      0        0 flannel.1
+
 ```
 ## 6.测试过程
 #### 6.1 keepalived宕机测试
