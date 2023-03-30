@@ -742,6 +742,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 #### 6.6 压力测试（后端外部IP）
 ```shell
+#打开1000个连接，使用30个线程，持续30秒对目标发起GET请求，结果为97212.27/QPS
 [root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://10.255.23.34:32630
 Running 30s test @ http://10.255.23.34:32630
   30 threads and 1000 connections
@@ -760,7 +761,7 @@ Transfer/sec:     78.90MB
 
 #### 6.7 压力测试（后端外部域名-直接ingress）
 ```shell
-#打开1000个连接，使用30个线程，持续30秒对目标发起GET请求，结果为29263.74/QPS
+#打开1000个连接，使用30个线程，持续30秒对目标发起GET请求，结果为79856.83/QPS
 [root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://shanyi-test01.preview.paas.gwm.cn/
 Running 30s test @ http://shanyi-test01.preview.paas.gwm.cn/
   30 threads and 1000 connections
@@ -779,6 +780,7 @@ Transfer/sec:     66.56MB
 
 #### 6.8 压力测试（后端外部域名-vip+lvs）
 ```shell
+##打开1000个连接，使用30个线程，持续30秒对目标发起GET请求，结果为78827.77/QPS
 [root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://shanyi-test01.preview.paas.gwm.cn/
 Running 30s test @ http://shanyi-test01.preview.paas.gwm.cn/
   30 threads and 1000 connections
