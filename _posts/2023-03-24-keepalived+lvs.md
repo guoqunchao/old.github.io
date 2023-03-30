@@ -4,7 +4,7 @@ title:      KeepAlived+LVS
 subtitle:   keepalived+lvs+ingress配置详解
 date:       2023-03-24
 author:     shanyi
-header-img: img/post-bg-swift2.jpg
+header-img: img/tag-bg-o.jpg
 catalog: true
 tags:
     - keepalived
