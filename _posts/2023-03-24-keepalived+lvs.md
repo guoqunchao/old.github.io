@@ -559,6 +559,160 @@ TCP  10.255.23.74:8765 rr persistent 120
 #访问服务正常
 ```
 
+#### 6.4 测试多个vs和rs(开发环境跨vlan)
+```shell
+#本次以开发环境为例 两台vs 10.246.97.49 10.246.97.50，本次配置省略路由网卡配置(参考以上方法)
+
+#keepalived01 conf
+[root@baoding-lvs-10-255-23-42 keepalived]# cat keepalived.conf
+vrrp_instance VI_1 {
+    state MASTER
+    interface bond0
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 11112222
+    }
+    virtual_ipaddress {
+        10.255.23.73
+    }
+}
+vrrp_instance VI_2 {
+    state BACKUP
+    interface bond0
+    virtual_router_id 52
+    priority 90
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 11112222
+    }
+    virtual_ipaddress {
+        10.255.23.74
+    }
+}
+
+virtual_server 10.255.23.73 80 {
+    delay_loop 10
+    lb_algo rr
+    lb_kind DR
+    persistence_timeout 120
+    protocol TCP
+    real_server 10.246.97.49 80 {
+        weight 1
+        HTTP_GET {
+            url {
+                path /healthz
+                status_code 200
+            }
+            connect_timeout 5
+            nb_get_retry 3
+            delay_before_retry 3
+        }
+    }
+    real_server 10.246.97.50 80 {
+        weight 1
+        HTTP_GET {
+            url {
+                path /healthz
+                status_code 200
+            }
+            connect_timeout 5
+            nb_get_retry 3
+            delay_before_retry 3
+        }
+    }
+}
+ 
+virtual_server 10.255.23.74 80 {
+    delay_loop 10
+    lb_algo rr
+    lb_kind DR
+    persistence_timeout 120
+    protocol TCP
+    real_server 10.246.97.49 80 {
+        weight 1
+        HTTP_GET {
+            url {
+                path /healthz
+                status_code 200
+            }
+            connect_timeout 5
+            nb_get_retry 3
+            delay_before_retry 3
+        }
+    }
+    real_server 10.246.97.50 80 {
+        weight 1
+        HTTP_GET {
+            url {
+                path /healthz
+                status_code 200
+            }
+            connect_timeout 5
+            nb_get_retry 3
+            delay_before_retry 3
+        }
+    }
+}
+
+#重启keepalived
+[root@baoding-lvs-10-255-23-42 keepalived]# ipvsadm -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.255.23.73:80 rr persistent 120
+  -> 10.246.97.49:80              Route   1      0          0         
+  -> 10.246.97.50:80              Route   1      0          0         
+TCP  10.255.23.74:80 rr persistent 120
+  -> 10.246.97.49:80              Route   1      0          0         
+  -> 10.246.97.50:80              Route   1      0          0  
+
+#配置rs路由和网卡（省略）
+...
+#查看配置信息
+[root@dev-worker-1 ~]# ip addr|head 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet 10.255.23.73/32 brd 10.255.23.73 scope global lo:1
+       valid_lft forever preferred_lft forever
+    inet 10.255.23.74/32 brd 10.255.23.74 scope global lo:2
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:16:3e:00:05:bb brd ff:ff:ff:ff:ff:ff
+
+[root@dev-worker-2 ~]# ip addr|head 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet 10.255.23.73/32 brd 10.255.23.73 scope global lo:1
+       valid_lft forever preferred_lft forever
+    inet 10.255.23.74/32 brd 10.255.23.74 scope global lo:2
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:16:3e:00:04:91 brd ff:ff:ff:ff:ff:ff
+
+[root@baoding-lvs-10-255-23-42 ~]# ipvsadm -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.255.23.73:80 rr persistent 120
+  -> 10.246.97.49:80              Route   1      0          0         
+  -> 10.246.97.50:80              Route   1      0          0  
+
+#经找域名测试抓包,二层通讯超时，不能通过Mac转发
+![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171047.jpg)
+![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171048.jpg)
+
+```
+
+
+
 ## 7.ipvsadm命令详解
 #### 7.1 保存及重载
 ```shell
