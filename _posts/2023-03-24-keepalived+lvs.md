@@ -705,11 +705,10 @@ TCP  10.255.23.73:80 rr persistent 120
   -> 10.246.97.49:80              Route   1      0          0         
   -> 10.246.97.50:80              Route   1      0          0  
 
+```
 #经找域名测试抓包,二层通讯超时，不能通过Mac转发
 ![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171047.jpg)
 ![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171048.jpg)
-
-```
 
 
 
