@@ -710,7 +710,90 @@ TCP  10.255.23.73:80 rr persistent 120
 ![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171047.jpg)
 ![](/img/2023-03-24-keepalived+lvs/Dingtalk_20230329171048.jpg)
 
+#### 6.5 压力测试配置
+```shell
+#lvs配置
+[root@baoding-lvs-10-255-23-42 keepalived]# ipvsadm -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.255.23.73:80 rr persistent 120
+  -> 10.255.23.4:80               Route   1      0          0         
+  -> 10.255.23.9:80               Route   1      0          0         
+TCP  10.255.23.74:80 rr persistent 120
+  -> 10.255.23.4:80               Route   1      0          0         
+  -> 10.255.23.9:80               Route   1      0          0    
 
+#rs配置
+[root@master3 ~]# ip addr|head 
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet 10.255.23.73/32 brd 10.255.23.73 scope global lo:1
+
+[root@master3 ~]# route -n 
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.255.23.254   0.0.0.0         UG    0      0        0 bond0
+10.255.23.0     0.0.0.0         255.255.255.0   U     0      0        0 bond0
+10.255.23.73    0.0.0.0         255.255.255.255 UH    0      0        0 lo
+```
+
+#### 6.6 压力测试（后端外部IP）
+```shell
+[root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://10.255.23.34:32630
+Running 30s test @ http://10.255.23.34:32630
+  30 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    10.27ms    4.96ms 301.81ms   97.16%
+    Req/Sec     3.26k   476.35     8.47k    69.47%
+  Latency Distribution
+     50%    9.58ms
+     75%   11.56ms
+     90%   13.34ms
+     99%   16.87ms
+  2926054 requests in 30.10s, 2.32GB read
+Requests/sec:  97212.27
+Transfer/sec:     78.90MB
+```
+
+#### 6.7 压力测试（后端外部域名-直接ingress）
+```shell
+#打开1000个连接，使用30个线程，持续30秒对目标发起GET请求，结果为29263.74/QPS
+[root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://shanyi-test01.preview.paas.gwm.cn/
+Running 30s test @ http://shanyi-test01.preview.paas.gwm.cn/
+  30 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    18.19ms   30.25ms   1.02s    94.70%
+    Req/Sec     2.68k   522.88     7.11k    73.76%
+  Latency Distribution
+     50%   11.24ms
+     75%   13.91ms
+     90%   20.14ms
+     99%  191.95ms
+  2404522 requests in 30.11s, 1.96GB read
+Requests/sec:  79856.83
+Transfer/sec:     66.56MB
+```
+
+#### 6.8 压力测试（后端外部域名-vip+lvs）
+```shell
+[root@bd-release-10-255-132-29 ~]# wrk -c 1000 -t 30 -d 30 --latency http://shanyi-test01.preview.paas.gwm.cn/
+Running 30s test @ http://shanyi-test01.preview.paas.gwm.cn/
+  30 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    21.96ms   44.18ms   1.08s    93.44%
+    Req/Sec     2.64k   537.10     6.57k    71.83%
+  Latency Distribution
+     50%   11.16ms
+     75%   14.35ms
+     90%   25.32ms
+     99%  213.42ms
+  2372400 requests in 30.10s, 1.93GB read
+Requests/sec:  78827.77
+Transfer/sec:     65.70MB
+```
 
 ## 7.ipvsadm命令详解
 #### 7.1 保存及重载
